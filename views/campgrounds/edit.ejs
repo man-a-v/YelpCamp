@@ -1,0 +1,35 @@
+<% layout('layouts/boilerplate')%>
+   <div class="row">
+    <h1 class="text-center">Edit Campground</h1>
+    <div class="col-6 offset-3">
+        <form action="/campgrounds/<%=camp._id%>?_method=PUT" method="POST" novalidate class="needs-validation">
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label><%//remember for of label and id of input must be same for em to get linked%>
+             <input type="text" class="form-control" id="title" name="campground[title]" value="<%=camp.title%>" required></input>
+            </div>
+             <div class="mb-3">
+                  <label for="location" class="form-label">Location</label><%//remember for of label and id of input must be same for em to get linked%>
+             <input type="text" class="form-control" id="location" name="campground[location]" value="<%=camp.location%>" required></input>
+            </div>
+
+            <div class="mb-3">
+                <label for="image" class="form-label">Image Url</label><%//remember for of label and id of input must be same for em to get linked%>
+           <input type="text" class="form-control" id="image" name="campground[image]" value="<%=camp.image%>" required></input>
+          </div>
+          <div class="col-auto mb-3">
+            <label class="form-label" for="price">Price</label>
+            <div class="input-group">
+              <div class="input-group-text">$</div>
+              <input type="text" class="form-control" id="price" placeholder="0.00" name="campground[price]" value="<%=camp.price%>" required>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label><%//remember for of label and id of input must be same for em to get linked%>
+       <textarea class="form-control" id="description" name="campground[description]" value="<%=camp.description%>" required></textarea>
+      </div>
+
+        <button class="btn btn-primary">Save</button></form>
+        <a href="/campgrounds">Back</a>
+
+    </div>
+</div>

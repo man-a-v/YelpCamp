@@ -1,0 +1,30 @@
+<% layout('layouts/boilerplate')%>
+<%//all this files content is going to be inserted in the boiler plate where body was written in ejs tags%>
+
+
+    <h1>
+        all Campgrounds
+    </h1>
+    <div>
+        <a href="/campgrounds/new">Add campground</a>
+    </div>
+    
+    <% for(let camp of camps) { %>
+       <div class="card" mb-3>
+           <div class="row">
+               <div class="col-md-4">
+                   <img  alt="" src="<%=camp.image%>" width="515" height="300"> <%//yaha img-fluid ki class use ki thi colt ne but because of that the height and widht i was setting for images wasnt being followed, the new images i eas adding height aur widht specied nahi follow kar rahe the so i had to remiove it , api se li hui images toh seed eali file me hi height and width set kardithi%>
+               </div>
+           </div>
+           <div class="col-md-8">
+               <div class="card-body">
+                   <h5 class="card-titile"><%= camp.title%></h5>
+                  <p class="card-text"><%=camp.description%></p>
+                  <p class="card-text text-muted"><%=camp.location%></p>
+              <a href="/campgrounds/<%=camp._id%>" class="btn btn-primary ">View <%=camp.title%></a> 
+                </div>
+           </div>
+       </div>
+    <%}%>
+
+
