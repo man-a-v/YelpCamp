@@ -1,8 +1,8 @@
 <% layout('layouts/boilerplate')%>
    <div class="row">
     <h1 class="text-center">Edit Campground</h1>
-    <div class="col-6 offset-3">
-        <form action="/campgrounds/<%=camp._id%>?_method=PUT" method="POST" novalidate class="needs-validation">
+    <div class="col-md-6 offset-md-3">
+        <form action="/campgrounds/<%=camp._id%>?_method=PUT" method="POST" novalidate class="needs-validation" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label><%//remember for of label and id of input must be same for em to get linked%>
              <input type="text" class="form-control" id="title" name="campground[title]" value="<%=camp.title%>" required></input>
@@ -13,9 +13,15 @@
             </div>
 
             <div class="mb-3">
-                <label for="image" class="form-label">Image Url</label><%//remember for of label and id of input must be same for em to get linked%>
-           <input type="text" class="form-control" id="image" name="campground[image]" value="<%=camp.image%>" required></input>
-          </div>
+              <label for="formFileMultiple" class="form-label">Add More Images</label>
+              <input type="file" class="form-control" id="formFileMultiple" name="image" multiple >
+               
+          </div> 
+           <!-- <div class="mb-3">
+                <label for="image" class="form-label">Add Images</label><%//remember for of label and id of input must be same for em to get linked%>
+           <input type="file" name="image" id="" multiple>
+               <input type="text" class="form-control" id="image" name="campground[image]" value="//camp.image" required></input>
+          </div>-->
           <div class="col-auto mb-3">
             <label class="form-label" for="price">Price</label>
             <div class="input-group">
@@ -27,9 +33,32 @@
             <label for="description" class="form-label">Description</label><%//remember for of label and id of input must be same for em to get linked%>
        <textarea class="form-control" id="description" name="campground[description]" value="<%=camp.description%>" required></textarea>
       </div>
-
-        <button class="btn btn-primary">Save</button></form>
-        <a href="/campgrounds">Back</a>
+      <h5> Delete Images </h5>
+      <div class="row row-cols-1 row-cols-md-4 g-4 mb-3">
+      <% camp.images.forEach(function(img, i) {  %>
+        <div class="col">
+          <div class="card">
+        <img src="<%=img.thumbnail%>" class="img-thumbnail" alt="">
+        
+        <div class="card-img-overlay text-end pt-1 pe-2">
+          <label class="visually-hidden" for="image-<%= i %>">Delete Image</label> 
+          <input class="form-check-input" type="checkbox" id="image-<%=i%>" name="deleteImages[]" value="<%=img.filename%>">
+        </div> <!--Filename(bcz i specfed it in value) of All selected images will get added to deleteImages[] automatically (this is a predefined word used for this only)-->
+        <!--<label for="image-<%//=i%>">Delete?</label>-->
+      </div>
+    </div>
+       
+        <% })%>
+      </div>
+    </div>
+        <div class="mb-3">
+        <button class="btn btn-info">Save</button>
+      </div>
+      </form>
+      <div class="mb-3">
+        <a href="/campgrounds" class="btn btn-danger">Back</a>
+       </div> 
 
     </div>
 </div>
+

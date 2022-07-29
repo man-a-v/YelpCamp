@@ -1,7 +1,7 @@
 <% layout('layouts/boilerplate')%>
 <div class="row">
     <h1 class="text-center">New Campground</h1>
-    <div class="col-6 offset-3">
+    <div class="col-md-6 offset-md-3">
         <form action="/campgrounds" method="POST" novalidate class="needs-validation" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label><%//remember for of label and id of input must be same for em to get linked%>
@@ -11,8 +11,12 @@
                   <label for="location" class="form-label">Location</label><%//remember for of label and id of input must be same for em to get linked%>
              <input type="text" class="form-control" id="location" name="campground[location]" required></input>
             </div>
-           <input type="file" name="image" id="" multiple>
-           <!-- <div class="mb-3">
+            <div class="mb-3">
+              <label for="formFileMultiple" class="form-label">Upload Images</label>
+              <input type="file" class="form-control" id="formFileMultiple" name="image" multiple required>
+              </div>
+            <!--<input type="file" name="image" id=""  multiple>-->
+           <!--<div class="mb-3">
                 <label for="image" class="form-label">Image Url</label><%//remember for of label and id of input must be same for em to get linked%>
            <input type="text" class="form-control" id="image" name="campground[image]" required></input>
           </div>-->

@@ -1,13 +1,14 @@
-if(process.env.NODE_ENV !== "production"){
+if (process.env.NODE_ENV !== "production") {
     require('dotenv').config();
 }
+//mongodb+srv://user1:<password>@cluster0.dlfch.mongodb.net/?retryWrites=true&w=majority
 //process.env.NODE_ENV this env var takes value of "development"
 //when app is in devlpmnt and production when app is destroyed
 //above code simple says that when were in devlpmnt mode
 // add the vars in .env file to process.env so they can be accesssed
 //by default we run in development mode
 const express = require('express');
-const app = express();
+
 const  path = require('path');
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
@@ -15,8 +16,7 @@ const wrapAsync = require('./Utils/wrapAsync');
 const Joi = require('joi');
 const {campgroundSchema, reviewSchema} = require('./schemas.js');
 const methodOverride = require('method-override');
-mongoose.connect('mongodb://localhost:27017/yelp-camp');
-//catch(error => console.error(error));
+
 const Campground = require('./models/campgrounds');
 const ExpressError = require('./Utils/ExpressError');
 const { join } = require('path');
@@ -29,13 +29,23 @@ const passport = require("passport");
  const LocalStrategy = require("passport-local");
   const User = require("./models/user");
   const userRoutes = require('./routes/users');
-
-
+const mongoSanitize = require('express-mongo-sanitize');
+const helmet = require("helmet");
+const  dbUrl= process.env.DB_URL || 'mongodb://localhost:27017/yelp-camp';
+const MongoStore = require("connect-mongo")(session);
+//'mongodb://localhost:27017/yelp-camp'
+  mongoose.connect(dbUrl);
+//i changed    to   0.0.0.0:27017 and the ECONNREFUSED to conect TCP error went away .
+//but then other functionality broke so readded localhost and it works now 
+//perhaps I'll have to do this again so thats why im wirting this
+//also im shifting this line of code below all this const mumbo jumbo
+//catch(error => console.error(error));
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error"));
 db.once("open", () => {
    console.log("Database connected");
 });
+const app = express();
 
 app.engine('ejs', ejsMate);//we're changing the default engine relied on by express for fucking with ejs
 app.set('view engine' , 'ejs');
@@ -44,21 +54,100 @@ app.use(express.urlencoded({extended:true}));
 //to be able to use the request body i.e 
 //completely parse it we need to use this line above
 app.use(methodOverride('_method'));
+app.use(express.static(path.join(__dirname,'public')));
+app.use(mongoSanitize()); //prevents mongo injection
+
+const secret = process.env.SECRET || 'thisshouldbeabettersecret';
+const store = new MongoStore({
+    url: dbUrl,
+    secret,
+    touchAfter: 24 * 60 * 60 //units here are seconds
+});
+
+store.on("error", function (e) {
+    console.log("SESSION STORE ERROR", e)
+})
+
+
 const sessionConfig = {
-    secret: 'thisshouldbeabettersecret',
+    store,
+    name: 'vnaf',//this will be the name of cookie sent by session. itll thus become harder for hacker to look for session sent cookie cux it aint the standard connect.sid anymore 
+    secret,
     resave: false,
     saveUninitialized: true,
     cookie: {
-        httpOnly: true,
-        expires: Date.now() + 1000*60*60*24*7,//expiration rakhni hoti hai ,
+        httpOnly: true,//cookies sent by session are accesible only through http not JS
+       //secure: true,
+        expires: Date.now() + 1000*60*60*24*7,//expiration rakhni hoti hai ,(//units are miliseconds)
         // imagine you sign in then if the info is stored in the session permanentely you're alway slogged in and anybodsy can come in and use it then
         maxAge: 1000*60*60*24*7//same thing as above just to illustrate ye dala 
-    }
+    }  
 }
 app.use(session(sessionConfig));
-app.use(express.static(path.join(__dirname,'public')));
-app.use(flash());  
 
+app.use(flash()); 
+
+
+const scriptSrcUrls = [
+    "https://stackpath.bootstrapcdn.com/",
+    "https://api.tiles.mapbox.com/",
+    "https://api.mapbox.com/",
+    "https://kit.fontawesome.com/",
+    "https://cdnjs.cloudflare.com/",
+    "https://cdn.jsdelivr.net/",
+    "https://res.cloudinary.com/"
+];
+const styleSrcUrls = [
+    "https://kit-free.fontawesome.com/",
+    "https://stackpath.bootstrapcdn.com/",
+    "https://api.mapbox.com/",
+    "https://api.tiles.mapbox.com/",
+    "https://fonts.googleapis.com/",
+    "https://use.fontawesome.com/",
+    "https://cdn.jsdelivr.net/",
+    "https://res.cloudinary.com/"
+];
+const connectSrcUrls = [
+    "https://*.tiles.mapbox.com",
+    "https://api.mapbox.com",
+    "https://events.mapbox.com",
+    "https://res.cloudinary.com/"
+];
+const fontSrcUrls = [ "https://res.cloudinary.com/" ];
+ 
+app.use(
+    helmet.contentSecurityPolicy({
+        directives : {
+            defaultSrc : [],
+            connectSrc : [ "'self'", ...connectSrcUrls ],
+            scriptSrc  : [ "'unsafe-inline'", "'self'", ...scriptSrcUrls ],
+            styleSrc   : [ "'self'", "'unsafe-inline'", ...styleSrcUrls ],
+            workerSrc  : [ "'self'", "blob:" ],
+            objectSrc  : [],
+            imgSrc     : [
+                "'self'",
+                "blob:",
+                "data:",
+                "https://res.cloudinary.com/duevon5bj/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT!
+                "https://images.unsplash.com/"
+            ],
+            fontSrc    : [ "'self'", ...fontSrcUrls ],
+            mediaSrc   : [ "https://res.cloudinary.com/duevon5bj/" ],
+            childSrc   : [ "blob:" ]
+        }
+    })
+);
+
+
+
+/*app.use(
+    helmet({
+      contentSecurityPolicy: false,
+      crossOriginResourcePolicy: false,
+      crossOriginEmbedderPolicy:false,
+      crossOriginOpenerPolicy: false
+    })
+  );*/ //shift+f5 full reload of page not just reload this helpd fix the mess of hellmet
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
@@ -98,13 +187,14 @@ const validateReview = (req,res,next)=>{
 
 
 
-app.get('/', (req,res) => {
-    res.render('home')
-}) 
+ 
 
 app.use('/',userRoutes);
 app.use('/campgrounds',campgroundss);
 app.use('/campgrounds/:id/reviews' , reviewss);
+app.get('/', (req,res) => {
+    res.render('home')
+})
 
 /*
 app.get('/campgrounds/makecampground', wrapAsync(async (req,res) => {

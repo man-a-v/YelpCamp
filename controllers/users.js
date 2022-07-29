@@ -33,6 +33,7 @@ module.exports.renderRegister = (req,res) => {
   module.exports.Login = (req,res) => {
     //passport.authenticate line borhi hai ki use local stratergy for authenticantion and if falure occurs in login then flash a flash message adn refirect to the login page. 
     req.flash('success', 'Welcome back!');
+    console.log(req.params);
     const redirectUrl = req.session.returnTo || '/campgrounds';
    //if i driectly go for logging in then redirect user ayega
    //so im redirected to campgrounds agar kahin aur jahan login needed hai then after ogin 
