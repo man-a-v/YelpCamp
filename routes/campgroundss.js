@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const CatchAsync = require('../utils/CatchAsync');
+const CatchAsync = require('../Utils/CatchAsync');
 //const ExpressError = require('../utils/ErrorHandler');
 const Review = require('../models/review');
 const Campground = require('../models/campgrounds');

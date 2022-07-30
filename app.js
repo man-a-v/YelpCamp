@@ -18,7 +18,7 @@ const {campgroundSchema, reviewSchema} = require('./schemas.js');
 const methodOverride = require('method-override');
 
 const Campground = require('./models/campgrounds');
-const ErrorHandler = require('./utils/errorhandler');
+const ErrorHandler = require('./Utils/ErrorHandler');
 const { join } = require('path');
 const Review = require('./models/review');
 const campgroundss = require('./routes/campgroundss');
