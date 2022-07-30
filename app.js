@@ -18,7 +18,7 @@ const {campgroundSchema, reviewSchema} = require('./schemas.js');
 const methodOverride = require('method-override');
 
 const Campground = require('./models/campgrounds');
-const ErrorHandler = require('./utils/ErrorHandler');
+//const ErrorHandler = require('./utils/ErrorHandler');
 const { join } = require('path');
 const Review = require('./models/review');
 const campgroundss = require('./routes/campgroundss');
@@ -282,11 +282,11 @@ app.post('/campgrounds/:id/reviews' , validateReview,wrapAsync( async(req,res)=>
     // res.send("DELETE ME!")
 }))*/
 
-app.all('*',(req,res,next)=>{//this is a routte handler app.use is not a route handler middleware its a different middleware entirely. 
+/*app.all('*',(req,res,next)=>{//this is a routte handler app.use is not a route handler middleware its a different middleware entirely. 
     //so when you want something done when none of the routes are matched this can eb used not app.use that will execute itself or try to on every request 
     next(new ErrorHandler('Page not found', 404)) //EXPRESSERROR USED HERE
     //this next is passing this error to the next error handler ehich here is the app.use below
-})
+})*/
 
 app.use((err,req,res,next)=>{
     const {status = 404} =err;
