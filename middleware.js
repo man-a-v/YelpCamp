@@ -1,5 +1,5 @@
 const {campgroundSchema, reviewSchema} = require('./schemas.js');
-const ExpressError = require('./utils/ExpressError');
+const ErrorHandler = require('./utils/errorhandler');
 const Campground = require('./models/campgrounds');
 const Review= require('./models/review');
 module.exports.isLoggedIn = (req,res,next)=>{
@@ -17,7 +17,7 @@ module.exports.validateReview = (req,res,next)=>{
     const {error} = reviewSchema.validate(req.body);
       if(error){
           const msg = error.details.map(el=>el.message).join(',')
-          throw new ExpressError(msg,400)
+          throw new ErrorHandler(msg,400)
       } else{
           next(); //must do so if we wanna make it to the route handler in which this middleware is called
       }
@@ -28,7 +28,7 @@ module.exports.validateCampground = (req,res,next)=>{
     const {error} = campgroundSchema.validate(req.body);
       if(error){
           const msg = error.details.map(el=>el.message).join(',')
-          throw new ExpressError(msg,400)
+          throw new ErrorHandler(msg,400)
       } else{
           next(); //must do so if we wanna make it to the route handlerin which this middleware is called
       }
