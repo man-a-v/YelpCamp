@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const wrapAsync = require('../utils/wrapAsync');
+const wrapAsync = require('../utils/WrapAsync');
 const ExpressError = require('../utils/ExpressError');
 const Review = require('../models/review');
 const Campground = require('../models/campgrounds');
