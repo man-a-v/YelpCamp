@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router({mergeParams : true});
-const wrapAsync = require('../utils/WrapAsync');
+const CatchAsync = require('../utils/CatchAsync');
 const Review = require('../models/review');
 const Campground = require('../models/campgrounds');
 const ExpressError = require('../utils/ExpressError');
@@ -8,8 +8,8 @@ const {campgroundSchema, reviewSchema} = require('../schemas.js');
 const {validateReview, isLoggedIn,isReviewAuthor} = require('../middleware');
 const reviews = require('../controllers/reviews');
 
-router.post('/' , isLoggedIn,validateReview,wrapAsync(reviews.createReview ));
+router.post('/' , isLoggedIn,validateReview,CatchAsync(reviews.createReview ));
 
-router.delete('/:reviewId', isLoggedIn,isReviewAuthor,wrapAsync(reviews.destroyReview));
+router.delete('/:reviewId', isLoggedIn,isReviewAuthor,CatchAsync(reviews.destroyReview));
 
  module.exports = router;

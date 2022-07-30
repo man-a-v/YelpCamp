@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const wrapAsync = require('../utils/WrapAsync');
+const CatchAsync = require('../utils/CatchAsync');
 const ExpressError = require('../utils/ExpressError');
 const Review = require('../models/review');
 const Campground = require('../models/campgrounds');
@@ -12,7 +12,7 @@ const {storage} = require('../cloudinary');
 var upload = multer({storage});
 
 
-router.get('/makecampground', wrapAsync(async (req,res) => {
+router.get('/makecampground', CatchAsync(async (req,res) => {
     const camp = new Campground({title: 'Backyard'});
     await camp.save();
      res.send(camp);
@@ -20,8 +20,8 @@ router.get('/makecampground', wrapAsync(async (req,res) => {
  
  
  router.route('/')
- .get( wrapAsync(campgrounds.index))
- .post(isLoggedIn,upload.array('image'), validateCampground, wrapAsync(campgrounds.createCamp));
+ .get( CatchAsync(campgrounds.index))
+ .post(isLoggedIn,upload.array('image'), validateCampground, CatchAsync(campgrounds.createCamp));
 
  //,upload.array('image') has to go berfore validate because it wroks on the request body data (storing stuff labbeled as images into cloudinry)
  //only then this will be accessible to vaildate
@@ -38,14 +38,14 @@ router.get('/makecampground', wrapAsync(async (req,res) => {
  //so it can override it
 
  router.route('/:id')
- .get(wrapAsync(campgrounds.showCamp))
- .put(isAuthor,upload.array('image'),validateCampground,wrapAsync( campgrounds.updateCamp))
+ .get(CatchAsync(campgrounds.showCamp))
+ .put(isAuthor,upload.array('image'),validateCampground,CatchAsync( campgrounds.updateCamp))
  //requirign overrride and enabling method overrride
  //with app.use(methodoverride()) line I can 
  //use data sent by from for put rqst
- .delete(isAuthor,wrapAsync(campgrounds.destroyCamp ));
+ .delete(isAuthor,CatchAsync(campgrounds.destroyCamp ));
  
  
-  router.get('/:id/edit',isLoggedIn,isAuthor,wrapAsync(campgrounds.renderEditForm ))
+  router.get('/:id/edit',isLoggedIn,isAuthor,CatchAsync(campgrounds.renderEditForm ))
  
  module.exports = router;
