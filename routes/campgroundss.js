@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const wrapAsync = require('../Utils/wrapAsync');
-const ExpressError = require('../Utils/ExpressError');
+const wrapAsync = require('../utils/wrapAsync');
+const ExpressError = require('../utils/ExpressError');
 const Review = require('../models/review');
 const Campground = require('../models/campgrounds');
 const {campgroundSchema, reviewSchema} = require('../schemas.js');

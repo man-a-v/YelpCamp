@@ -12,13 +12,13 @@ const express = require('express');
 const  path = require('path');
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
-const wrapAsync = require('./Utils/wrapAsync');
+const wrapAsync = require('./utils/wrapAsync');
 const Joi = require('joi');
 const {campgroundSchema, reviewSchema} = require('./schemas.js');
 const methodOverride = require('method-override');
 
 const Campground = require('./models/campgrounds');
-const ExpressError = require('./Utils/ExpressError');
+const ExpressError = require('./utils/ExpressError');
 const { join } = require('path');
 const Review = require('./models/review');
 const campgroundss = require('./routes/campgroundss');
